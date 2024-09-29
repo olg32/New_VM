@@ -1,0 +1,798 @@
+Netplan Ubuntu 22.04  ENK_Sniffer_2.0
+
+# Let NetworkManager manage all devices on this system
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens160:
+      addresses:
+        - 10.217.16.235/24
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4]
+      routes:
+        - to: default
+          via: 10.217.16.1
+
+
+sudo systemctl status <name>
+sudo service <name> restart
+
+#New Ubuntu VM
+sudo apt update --fix-missing
+sudo apt upgrade -y
+sudo apt autoremove
+sudo apt install openssh-server -y
+sudo apt install -y locate
+sudo apt install -y open-vm-tools-desktop
+sudo apt install -y build-essential
+sudo apt install linux-headers-$(uname -r)
+sudo apt install -y openssl libssl-dev libffi-dev
+sudo apt install -y net-tools mtr curl 
+sudo apt install -y iputils-arping iputils-ping iputils-tracepath
+sudo apt install -y traceroute
+sudo apt install nethogs
+
+---Containers -------------------------------------
+apt install nano  
+sudo apt install iputils-ping
+sudo apt install -y iproute2
+
+-- Development ------------------------------------
+sudo apt install -y python3-pip
+sudo apt install -y python3-dev 
+sudo pip3 install --upgrade pip
+sudo apt-get install -y git-core
+sudo pip3 install setuptools
+sudo pip3 install cryptography
+sudo pip3 install paramiko
+sudo pip3 install netmiko
+sudo pip3 install pyntc
+sudo pip3 install napalm
+sudo apt install ansible
+sudo apt install sshpass 
+sudo apt clean
+
+----------------------------------------------------------
+Configuring FTP Server
+
+sudo apt-get install -y vsftpd
+
+sudo nano /etc/vsftpd.conf
+ 
+write_enable=YES
+ftpd_banner= Welcome to .....
+chroot_local_user=YES  ---------------> if the value is YES, users can only cd to their home directory.and if it's NO user can cd to the entire file system.
+allow_writeable_chroot=YES
+userlist_enable=YES
+userlist_file=/etc/vsftpd.user_list
+userlist_deny=NO
+
+- service vsftpd restart or sudo systemctl restart vsftpd
+ 
+- Create FTP User:
+
+sudo useradd -m opsengip
+sudo passwd opsengip                                                                                                                                                      
+Enter new UNIX password:                                                                                                                                                                       
+Retype new UNIX password:                                                                                                                                                                      
+passwd: password updated successfully 
+
+sudo usermod -aG sudo opsengip
+
+- Add the user to the allowed FTP users list:
+echo "administrator" | sudo tee -a /etc/vsftpd.user_list
+echo "opsengip" | sudo tee -a /etc/vsftpd.user_list
+echo "gns3" | sudo tee -a /etc/vsftpd.user_list
+echo "oscar" | sudo tee -a /etc/vsftpd.user_list
+
+- Create the FTP directory tree and set the correct permissions:
+sudo mkdir -p /home/oscar/ftp
+sudo chmod 750 /home/oscar/ftp
+sudo chown -R oscar: /home/oscar/ftp
+
+sudo mkdir -p /home/administrator/ftp
+sudo chmod 750 /home/administrator/ftp
+sudo chown -R administrator: /home/administrator/ftp
+
+sudo mkdir -p /home/opsengip/ftp
+sudo chmod 750 /home/opsengip/ftp
+sudo chown -R opsengip: /home/opsengip/ftp
+
+sudo systemctl restart vsftpd
+service vsftpd start ---> Start
+service vsftpd restart
+service vsftpd status
+
+To assing bash shell to opsengip
+
+chsh -s /bin/bash
+
+restart
+
+-----------------------------------------------------------------------------
+changing login page Ubuntu 20.04
+
+Location of Ubuntu Logo in login screen:
+
+/usr/share/plymouth/ubuntu-logo.png
+
+cd /usr/local/etc
+
+git clone https://github.com/PRATAP-KUMAR/focalgdm3.git
+
+sudo apt install -y libglib2.0-dev
+
+sudo ./focalgdm3/focalgdm3 --set
+
+color: #03396C
+
+installing tweaks:
+
+$ sudo apt install -y gnome-tweaks
+
+To install a lock screen:
+
+sudo apt install gir1.2-clutter-1.0
+
+in web browser go to 
+extensions.gnome.org/extension/1476/unlock-dialog-background/
+
+Don’t see the toggle? Do following steps, then refresh the web page.
+
+    Click the link text “click here to install browser extension” and follow the pop-ups to install the browser extension: 
+
+Click on the toggle and confirm on the next pop-up to install the extension.
+
+Restart browser
+
+Open Tweaks and select lock backgroud & wallpaper
+
+sudo apt install chrome-gnome-shell
+
+------------------------------------------------------------------------------------------
+
+Install Wireshark
+
+sudo add-apt-repository ppa:wireshark-dev/stable
+sudo apt update
+sudo apt install wireshark
+
+Should yes
+
+sudo usermod -a -G wireshark administrator
+
+sudo usermod -a -G wireshark opsengip
+
+Also change dumpcap binary file permissions.
+
+sudo chgrp wireshark /usr/bin/dumpcap
+sudo chmod 754 /usr/bin/dumpcap
+sudo setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' /usr/bin/dumpcap
+Reboot
+-------------------------------------------------------------------------------------------------
+
+EXtensions:
+
+$ sudo apt install  gnome-shell-extension-show-ip
+$ sudo apt install  gnome-shell-extension-system-monitor
+
+
+Installing CHrome:
+
+sudo apt install gdebi-core wget
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo gdebi google-chrome-stable_current_amd64.deb
+
+
+
+sudo apt-get install -y netperf
+
+netserver & ----> leave it as server listening
+
+
+Installing Netperf 2.7 (Ubuntu 20 and above)
+
+sudo apt install netperf
+
+Installing Netperf 2.7 (Ubuntu 18 and below)
+
+Download: https://github.com/HewlettPackard/netperf/releases/netperf-netperf-2.7.0.tar.gz
+
+tar -xvzf netperf-netperf-2.7.0.tar.gz
+
+sudo apt install g++-4.8
+
+cd netperf-netperf-2.7.0/
+
+export CC=gcc-4.8 CXX=g++-4.8
+
+./configure --enable-demo
+
+make
+
+sudo make install    
+
+netperf -V
+
+make clean
+
+---------------------------------------------------------------
+
+
+Flent:
+
+Installing Flent from GitHub repository
+
+cd /usr/local/
+
+sudo git clone https://github.com/tohojo/flent
+
+sudo apt install python3-pip
+
+sudo pip3 install setuptools
+
+sudo python3 setup.py install
+
+------------------------------------------------------------
+
+Installing Iperf3
+cd /usr/local/bin
+wget https://downloads.es.net/pub/iperf/iperf-3.9.tar.gz 
+or 
+https://fossies.org/linux/privat/iperf-3.9.tar.gz/
+sudo tar xzf iperf-3.9.tar.gz
+cd iperf-3.9
+sudo ./configure
+sudo make
+cd src
+./iperf3 --help
+	
+cd src
+./iperf3 --help
+/etc/rc.local
+/usr/local/iperf-3.9/src/./iperf3 -s -D -p 5110 ------> Enable server Native Vlan
+
+/usr/local/iperf-3.9/src/./iperf3 -s -D -p 5107 ------> Enable server MTNRTS Vlan
+/usr/local/iperf-3.9/src/./iperf3 -s -D -p 5117 ------> Enable server MMONITORING Vlan
+/usr/local/iperf-3.9/src/./iperf3 -s -D -p 5118 ------> Enable server DEVNET Vlan
+/usr/local/iperf-3.9/src/./iperf3 -s -D -p 5301 ------> Enable server INTPUB Vlan
+/usr/local/iperf-3.9/src/./iperf3 -s -D -p 5200 ------> Enable public server
+
+bwt.hol.04
+/usr/local/bin/iperf-3.9/src/./iperf3 -s -D -p 5107 
+/usr/local/bin/iperf-3.9/src/./iperf3 -s -D -p 5117
+/usr/local/bin/iperf-3.9/src/./iperf3 -s -D -p 5301
+
+lab.hol.04
+/home/administrator/ftp/iperf-3.9/src/./iperf3 -s -D -p 5107  
+/home/administrator/ftp/iperf-3.9/src/./iperf3 -s -D -p 5117
+/home/administrator/ftp/iperf-3.9/src/./iperf3 -s -D -p 5301
+
+Default port 5201
+
+ps -ef | grep iperf3
+
+L3:
+/usr/local/iperf-3.9/src/./iperf3 -c 10.110.84.252 --bidir -t 60 -i 1 -p 5107
+/usr/local/iperf-3.9/src/./iperf3 -c 10.110.85.124 --bidir -t 60 -i 1 -p 5117
+/usr/local/iperf-3.9/src/./iperf3 -c 10.110.86.252 --bidir -t 60 -i 1 -p 5301
+
+flent rrul_var -H 10.110.84.252 --test-parameter bidir_streams=7 --test-parameter markings=11,13,15,17,19,21,25
+
+L2:
+/usr/local/iperf-3.9/src/./iperf3 -c 10.119.85.60 --bidir -t 60 -i 1 -p 5107
+/usr/local/iperf-3.9/src/./iperf3 -c 10.119.85.188 --bidir -t 60 -i 1 -p 5117
+/usr/local/iperf-3.9/src/./iperf3 -c 10.119.86.60 --bidir -t 60 -i 1 -p 5301
+
+flent rrul_var -H 10.119.86.60 --test-parameter bidir_streams=7 --test-parameter markings=11,13,15,17,19,21,25
+
+
+
+ec2-100-26-239-191.compute-1.amazonaws.com
+
+/usr/local/./iperf3 -c 172.31.0.121 --bidir -i 10
+/usr/local/iperf-3.9/src/./iperf3 -c 172.31.0.121 --bidir -t 60 -i 1 -p 5110
+/usr/local/iperf-3.9/src/./iperf3 -c 10.119.86.60 --bidir -t 60 -i 1 -p 5301
+
+
+[ ID][Role] Interval           Transfer     Bitrate         Retr
+[  5][TX-C]   0.00-10.00  sec  1.08 GBytes   930 Mbits/sec    0             sender
+[  5][TX-C]   0.00-10.00  sec  1.08 GBytes   928 Mbits/sec                  receiver
+[  7][RX-C]   0.00-10.00  sec  1.09 GBytes   934 Mbits/sec    0             sender
+[  7][RX-C]   0.00-10.00  sec  1.09 GBytes   933 Mbits/sec                  receiver
+
+iperf Done.
+
+At the end of the test, the server sends what it measured back to the client. The client reports 930 Mbits/sec transmitted TX-C bandwidth, as measured from its perspective (sender) and 928 Mbits/sec TX-C from the server’s perspective (received). Then it reports 933 Mbits/sec received RX-C bandwidth, as measured from its perspective (received) and 934 Mbits/sec RX-C from the server’s perspective (sender). 
+
+===========================================================
+
+Killing the iperf daemon
+
+ps -ef | grep iperf3
+adminis+ 10282 28312  0 17:25 pts/1    00:00:00 grep --color=auto iperf3
+root     30075     1  0 Apr04 ?        00:00:11 iperf3 -s -D
+
+ps aux | grep iperf3
+
+kill -11 pid
+
+---------------------------------------------------------------
+
+Building Netdata for MArkings
+
+Netdata Directory cd /usr/share/netdata/web
+
+- Netdata install: 
+  sudo su
+  bash <(curl -Ss https://my-netdata.io/kickstart.sh)   
+
+- FireHol install:
+  sudo apt install firehol
+
+  sudo apt-get purge --auto-remove firehol
+
+-install /etc/firehol/fireqos.conf and configure it
+
+#
+# rc.local
+#
+#iperf as daemon in server
+/usr/bin/iperf3 -s -D
+/usr/bin/indicator-ip -i ens160
+exit 0 
+
+- ADD Files:
+/lib/systemd/system/promisc.service
+/usr/bin/devnet.sh
+/usr/share/netdata/web/bwtest2.html 
+/usr/share/netdata/web/GE_Logo.png
+/usr/share/netdata/web/bwtest_301m.html 
+/etc/firehol/fireqos.conf
+  
+- Modify file /usr/sbin/fireqos to add dscp values:
+for tdscp in ${dscp}
+        do
+                dscp_value=
+                tos_value=
+                tos_mask=
+                case "${tdscp^^}" in
+                        any)    ;;
+
+                        CS1)
+                                tos_value="0x20"
+                                tos_mask="0xfc"
+                                ;;
+                        CS2)
+                                tos_value="0x40"
+                                tos_mask="0xfc"
+                                ;;
+                        CS3)
+                                tos_value="0x60"
+                                tos_mask="0xfc"
+                                ;;
+                        CS4)
+                                tos_value="0x80"
+                                tos_mask="0xfc"
+                                ;;
+
+------------------------------------------------------------------
+starting QoS 
+
+- Starting services
+  sudo systemctl enable promisc 
+
+  # FireQOS configuration file sudo nano /etc/firehol/fireqos.conf
+
+-  sudo fireqos start 
+
+-  /usr/sbin/service netdata restart 
+
+flent rrul_var -H 10.110.84.252 --test-parameter bidir_streams=7 --test-parameter markings=11,13,15,17,19,21,25
+
+flent tcp_12down
+
+flent tcp12up
+
+---------------------------------------------------------------------
+changing from Netdata QoS to LAN
+
+sudo mv fireqos.conf fireqos.conf.dscp
+sudo mv fireqos.conf.vlans fireqos.conf
+sudo fireqos start 
+
+
+---------------------------------------------------------------------
+
+Fixing Netdata bug:
+
+bash <(curl -Ss https://my-netdata.io/kickstart.sh) --stable-channel --reinstall
+
+sudo ln -s /usr/bin/python3 /usr/bin/python
+
+--------------------------------------------------------------------------------
+
+Installing Netdata + Firehol:
+
+apt install firehol
+
+curl -Ss 'https://raw.githubusercontent.com/firehol/netdata-demo-site/master/install-required-packages.sh' >/tmp/kickstart.sh && bash /tmp/kickstart.sh -i firehol netdata
+
+The above will give you all the packages you need to install to your system to install netdata and firehol.
+
+then run script:
+
+install-all-firehol.sh
+
+
+ Reinstalling netdata
+
+sudo su
+
+bash <(curl -Ss https://my-netdata.io/kickstart.sh) --stable-channel --reinstall
+
+------------------------------------------------------------------------------------------------------------
+
+Configuring Ubuntu Server Ship Side:
+
+
+
+sudo apt-get update --fix-missing
+
+sudo apt-get upgrade -y
+
+restart
+
+sudo apt-get install -y build-essential
+
+sudo apt-get install -y net-tools mtr curl 
+
+sudo apt-get install -y traceroute
+
+sudo apt-get install mlocate
+sudo apt-get install htop
+
+- Enable ftp server
+
+
+ 
+# To disable cloud-init's network configuration capabilities, write a file
+# sudo nano /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+cd /etc/netplan 
+sudo mv 50-cloud-init.yaml 50-cloud-init.yaml.bak
+sudo nano 00-installer-config.yaml
+#
+# DCL_Magic IP Settings
+#
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens160:
+      dhcp4: no
+      dhcp6: no
+      addresses:
+        - 10.152.56.60/24
+      gateway4: 10.152.56.1
+      nameservers:
+          addresses:
+          - 8.8.8.8
+
+    #SPAN Rx/Tx Main Trunk
+    ens192:
+      dhcp4: no
+      dhcp6: no
+
+    #SPAN Rx Main Trunk
+    ens224:
+      dhcp4: no
+      dhcp6: no
+
+    #SPAN Tx Main Trunk
+    ens256:
+      dhcp4: no
+      dhcp6: no
+
+- Edit bashrc
+- reboot
+- apt Upgrade
+PW: NETOPs_33025!
+
+- Create opsengip account
+- Create interfaces
+- Create netplan
+  sudo nano /etc/netplan/00-installer-config.yaml
+-------------------------------------------------------------------------------
+Making promiscuous mode permanent
+
+- Create a file:
+
+sudo nano /etc/systemd/system/rc-local.service
+
+Then add the following content to it.
+
+[Unit]
+ Description=/etc/rc.local Compatibility
+ ConditionPathExists=/etc/rc.local
+
+[Service]
+ Type=forking
+ ExecStart=/etc/rc.local start
+ TimeoutSec=0
+ StandardOutput=tty
+ RemainAfterExit=yes
+ SysVStartPriority=99
+
+[Install]
+ WantedBy=multi-user.target
+
+
+- Make the service executable:
+
+sudo chmod 644 /etc/systemd/system/rc-local.service
+
+- Enable and start the service:
+
+sudo systemctl enable rc-local.service
+sudo systemctl start rc-local.service
+
+
+
+- Create a file:
+sudo nano /etc/rc.local
+
+- Add commands:
+
+#!/bin/bash
+
+#Set Promiscuous mode
+
+/sbin/ip link set dev ens192 promisc on
+/sbin/ip link set ens192 up
+/sbin/ip link set dev ens224 promisc on
+/sbin/ip link set ens224 up
+/sbin/ip link set dev ens256 promisc on
+/sbin/ip link set ens256 up
+
+
+- Next, run the following command to make sure /etc/rc.local file is executable.
+
+sudo chmod +x /etc/rc.local
+sudo chown root /etc/rc.local
+
+
+- Reboot or start service
+
+sudo systemctl start rc-local.service
+sudo systemctl status rc-local.service
+
+--------------------------------------------------------------------------------------
+
+- Switch SPAN Setup
+
+vlan 220
+ remote-span
+!
+vlan 222
+ remote-span
+!
+vlan 223
+ remote-span
+!
+interface GigabitEthernet1/0/39
+ description To Super Micro CTO-09 ETH03 (vmnic3 ac:1f:6b:7d:06:fb)-SPAN FOR Traffic Monitoring
+ switchport mode trunk
+ switchport trunk allowed vlan 220-223
+!
+! monitor session 1 source vlan 333
+! monitor session 1 destination interface Gi1/0/24
+monitor session 2 source interface Gi1/0/1 both
+monitor session 2 destination remote vlan 220 
+monitor session 3 source interface Gi1/0/1 rx
+monitor session 3 destination remote vlan 222 
+monitor session 4 source interface Gi1/0/1 tx
+monitor session 4 destination remote vlan 223 
+!
+- Install ntopng
+
+ To install the programs in Ubuntu 20.04 open your shell and type:
+sudo apt-get install software-properties-common wget 
+sudo add-apt-repository universe 
+sudo wget https://packages.ntop.org/apt-stable/20.04/all/apt-ntop-stable.deb 
+sudo apt install ./apt-ntop-stable.deb 
+
+ To install the programs in Ubuntu 18.04 open your shell and type:
+
+sudo apt-get install software-properties-common wget 
+sudo add-apt-repository universe 
+sudo wget https://packages.ntop.org/apt-stable/18.04/all/apt-ntop-stable.deb 
+sudo apt install ./apt-ntop-stable.deb 
+
+ Once the ntop repository has been added, you can run the following commands (as root) to install ntop Packages:
+sudo apt-get clean all
+sudo apt-get update
+sudo apt-get install -y pfring-dkms
+sudo apt-get install -y nprobe
+sudo apt-get install -y ntopng
+sudo apt-get install -y n2disk
+sudo apt-get install -y cento
+sudo apt-get install -y pfring-drivers-zc-dkms
+
+
+apt-mark hold ntopng ---> disables automatic updates
+
+Automatic updates can be enabled again with:
+
+apt-mark unhold ntopng
+
+
+
+ Unremark sudo nano /etc/ntopng/ntopng.conf 
+  
+-i=ens192
+-w=3000
+add
+-l=1 for login passby
+--community
+ sudo systemctl restart ntopng
+
+- Install Netdata
+
+sudo su
+bash <(curl -Ss https://my-netdata.io/kickstart.sh)
+
+ Move files from WinSCP
+
+sudo mv /home/administrator/ftp/*.* /usr/share/netdata/web/
+cd /usr/share/netdata/web/
+
+ sudo chown netdata GE_Logo.png
+ sudo chgrp netdata GE_Logo.png
+
+ sudo chown netdata  OpsEngIP_0.html
+ sudo chgrp netdata  OpsEngIP_0.html
+ sudo nano OpsEngIP_0.html
+
+ sudo chown netdata  OpsEngIP_1.html
+ sudo chgrp netdata  OpsEngIP_1.html
+ sudo nano OpsEngIP_0.html
+
+
+sudo nano /etc/apt/apt.conf.d/10periodic
+sudo nano /etc/apt/apt.conf.d/20auto-upgrades
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+sudo unattended-upgrade -d -v
+
+sudo nano /usr/share/netdata/web/PortChanTraffic.html
+
+   <img src="GE_Logo.png" style="width:390px; height:75px;">
+ 
+   <p style="margin-left: 100px; text-align: left; color:#00AEDB" </p>
+     <font><b> Operations Engineering IP </b></font>
+
+sudo systemctl restart netdata
+
+TOTAL ESTABLISHED CONNECTIONS
+
+Gl0b@l3agle$
+
+
+-------------------------------------------------------------------------------
+FIREQOS
+
+# FireQOS configuration file /etc/firehol/fireqos.conf
+
+sudo fireqos start
+
+
+
+html comms
+<!-- -->
+
+============================================================================
+
+Installing Webmin
+
+sudo apt-get update --fix-missing
+
+sudo apt install perl -y
+
+sudo apt autoremove
+
+sudo apt-get --fix-broken install
+
+scp administrator@10.200.9.30:/home/administrator/Downloads/webmin_1.981_all.deb /home/administrator/Downloads/webmin_1.981_all.deb
+
+sudo dpkg -i webmin_1.981_all.deb
+
+
+https://sourceforge.net/projects/webadmin/files/webmin/1.981/webmin_1.981_all.deb
+
+=========================================================================================================
+ 
+VS Code (VSC)
+Install:
+- Python
+- Python Debugger
+- Python Extension Pack
+- Prettier
+- vscode-icons
+- Code runner
+- Yaml
+ 
+- HTML CSS Support
+- Color Highlight
+- colorize
+= Git Extension Pack
+
+Color Theme: Dark (Visual Studio C/C++)
+
+To modify remarks color in theme type:
+
+ctr/shift/p 
+
+select Open Settings (JSON)
+
+Add:
+
+"editor.tokenColorCustomizations": {
+        "comments": "#FFF000",
+    },
+
+------------------------------------------------------------------------------
+
+Installing netdata:
+
+wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --no-updates --stable-channel --disable-telemetry
+
+cd /var/lib/netdata/www/ ---> New
+
+cd /usr/share/netdata/web/  --->old
+
+sudo ifconfig ens224 promisc
+sudo ifconfig ens256 promisc
+
+
+<img src="MTNSAT-large-Color.png" style="width:310px; height:75px;">
+-----------------------------------------------------------------------------------------
+Installing Netplan on Ubuntu Server
+
+sudo apt remove --purge cloud-init
+sudo rm -rf /etc/cloud-init
+sudo nano /etc/netplan/01-netcfg.yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens3:
+      dhcp4: false
+      dhcp6: false       
+      addresses:
+        - 10.0.1.11/24
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4]   
+      routes:
+        - to: default
+          via: 10.0.1.1
+
+
+Before typing sudo netplan apply, enter:
+
+systemctl start systemd-resolved.service
+systemctl enable systemd-resolved.service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
