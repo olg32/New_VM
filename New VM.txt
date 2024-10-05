@@ -1,18 +1,65 @@
-Netplan Ubuntu 22.04  ENK_Sniffer_2.0
+Installing Netplan on Ubuntu Server
 
-# Let NetworkManager manage all devices on this system
+sudo apt remove --purge cloud-init
+sudo rm -rf /etc/cloud-init
+sudo nano /etc/netplan/01-netcfg.yaml
 network:
   version: 2
   renderer: networkd
   ethernets:
-    ens160:
+    ens3:
+      dhcp4: false
+      dhcp6: false       
       addresses:
-        - 10.217.16.235/24
+        - 10.0.1.11/24
       nameservers:
-        addresses: [8.8.8.8, 8.8.4.4]
+        addresses: [8.8.8.8, 8.8.4.4]   
       routes:
         - to: default
-          via: 10.217.16.1
+          via: 10.0.1.1
+
+
+Before typing sudo netplan apply, enter:
+
+systemctl start systemd-resolved.service
+systemctl enable systemd-resolved.service
+
+--------------------------------------------------------------------------------------
+Installing Chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt -f install
+
+---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Enabling RDP
+
+- Install Xubuntu https://xubuntu.org/download/
+  sudo apt install xfce4-goodies
+  sudo apt install xrdp -y
+
+  reboot
+------------------------------------------------------------------------------------------
+
+Install Wireshark
+
+sudo add-apt-repository ppa:wireshark-dev/stable
+sudo apt update
+sudo apt install wireshark
+
+Should yes
+
+sudo usermod -a -G wireshark administrator
+
+sudo usermod -a -G wireshark opsengip
+
+Also change dumpcap binary file permissions.
+
+sudo chgrp wireshark /usr/bin/dumpcap
+sudo chmod 754 /usr/bin/dumpcap
+sudo setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' /usr/bin/dumpcap
+Reboot
+-------------------------------------------------------------------------------------------------
+
 
 
 sudo systemctl status <name>
@@ -149,28 +196,6 @@ Restart browser
 Open Tweaks and select lock backgroud & wallpaper
 
 sudo apt install chrome-gnome-shell
-
-------------------------------------------------------------------------------------------
-
-Install Wireshark
-
-sudo add-apt-repository ppa:wireshark-dev/stable
-sudo apt update
-sudo apt install wireshark
-
-Should yes
-
-sudo usermod -a -G wireshark administrator
-
-sudo usermod -a -G wireshark opsengip
-
-Also change dumpcap binary file permissions.
-
-sudo chgrp wireshark /usr/bin/dumpcap
-sudo chmod 754 /usr/bin/dumpcap
-sudo setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' /usr/bin/dumpcap
-Reboot
--------------------------------------------------------------------------------------------------
 
 EXtensions:
 
@@ -757,31 +782,7 @@ sudo ifconfig ens256 promisc
 
 <img src="MTNSAT-large-Color.png" style="width:310px; height:75px;">
 -----------------------------------------------------------------------------------------
-Installing Netplan on Ubuntu Server
 
-sudo apt remove --purge cloud-init
-sudo rm -rf /etc/cloud-init
-sudo nano /etc/netplan/01-netcfg.yaml
-network:
-  version: 2
-  renderer: networkd
-  ethernets:
-    ens3:
-      dhcp4: false
-      dhcp6: false       
-      addresses:
-        - 10.0.1.11/24
-      nameservers:
-        addresses: [8.8.8.8, 8.8.4.4]   
-      routes:
-        - to: default
-          via: 10.0.1.1
-
-
-Before typing sudo netplan apply, enter:
-
-systemctl start systemd-resolved.service
-systemctl enable systemd-resolved.service
 
 
 
