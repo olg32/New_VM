@@ -1,7 +1,7 @@
 Installing Netplan on Ubuntu Server
 
 sudo apt remove --purge cloud-init
-sudo rm -rf /etc/cloud-init
+
 sudo nano /etc/netplan/01-netcfg.yaml
 network:
   version: 2
@@ -18,24 +18,62 @@ network:
         - to: default
           via: 10.0.1.1
 
+ OR
+
+# MIR03LNX
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens18:
+      addresses:
+        - 10.152.32.51/24
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4]
+      routes:
+        - to: default
+          via: 10.152.32.1
+  ethernets:
+    ens19:
+      dhcp4: no
+      dhcp6: no
+
+  vlans:
+    vlan10:
+      id: 10
+      link: ens19
+      addresses: [10.10.10.51/24]
+
+    vlan20:
+      id: 20
+      link: ens19
+      addresses: [10.10.20.51/24]
+
+    vlan30:
+      id: 30
+      link: ens19
+      dhcp4: yes
+      dhcp6: no
 
 Before typing sudo netplan apply, enter:
 
 systemctl start systemd-resolved.service
 systemctl enable systemd-resolved.service
-
+$ cd /etc/netplan
+$ sudo chmod 600 *.yaml
 --------------------------------------------------------------------------------------
 Installing Chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
 sudo apt -f install
 
 ---------------------------------------------------------------------------------------
--------------------------------------------------------------------------------
 Enabling RDP
 
 - Install Xubuntu https://xubuntu.org/download/
-  sudo apt install xfce4-goodies
-  sudo apt install xrdp -y
+ sudo apt install xrdp -y  
+ sudo apt install xfce4-goodies
+ 
 
   reboot
 ------------------------------------------------------------------------------------------
